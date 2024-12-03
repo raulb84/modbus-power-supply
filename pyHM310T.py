@@ -10,7 +10,7 @@ class PowerSupply:
         self.current_limit = current_limit  # Current limit in amps
         self.slave = slave
         
-        self.client = ModbusClient(method='rtu', port=port, baudrate=baudrate)
+        self.client = ModbusClient(port=port, baudrate=baudrate)
         if not self.client.connect():
             raise PowerSupplyCommunicationError("Failed to connect to the power supply")
         # Attempt to read a known register as a connectivity check
@@ -122,14 +122,14 @@ class PowerSupply:
         self.write_register(0x0020, int(ovp * 100))
 
     def get_ocp(self):
-        return self.read_register(0x0021) / 100.0
+        return self.read_register(0x0021) / 1000.0
 
     def set_ocp(self, ocp):
         if ocp < 0:
             ocp = 0
         elif ocp > 10:
             ocp = 10
-        self.write_register(0x0021, int(ocp * 100))
+        self.write_register(0x0021, int(ocp * 1000))
 
     def get_opp(self):
         high = self.read_register(0x0022)
